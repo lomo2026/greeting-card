@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    
+    <!-- 微信分享关键：设置分享标题、描述、封面 -->
+    <title>把爱带回家 | 企业新春祝福</title>
+    <meta name="description" content="这是我送你的新年祝福，愿温暖常伴，幸福安康！" />
+    <meta property="og:title" content="把爱带回家 | 企业新春祝福" />
+    <meta property="og:description" content="这是我送你的新年祝福，愿温暖常伴，幸福安康！" />
+    <meta property="og:image" content="https://img.alicdn.com/imgextra/i4/O1CN01ZvJhUH1XqQmYdFzKj_!!6000000002885-2-tps-1080-1920.png" />
+    <meta property="og:url" content="" />
+
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: #fff;
+            font-family: "华文行楷", "Microsoft YaHei", sans-serif;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: linear-gradient(to bottom, #fdf6f0, #ffece6);
+        }
+        .container { max-width: 600px; width: 100%; }
+
+        /* 表单区 */
+        .form-area {
+            background: white;
+            padding: 25px;
+            border-radius: 20px;
+            box-shadow: 0 6px 20px rgba(231, 76, 60, 0.15);
+            margin-bottom: 25px;
+        }
+        .form-area h2 {
+            text-align: center;
+            color: #c0392b;
+            margin-bottom: 20px;
+            font-size: 26px;
+        }
+        textarea, input {
+            width: 100%;
+            padding: 14px;
+            margin: 12px 0;
+            border: 2px solid #e74c3c;
+            border-radius: 12px;
+            font-size: 18px;
+            font-family: "华文行楷", "Microsoft YaHei";
+        }
+        button {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+            box-shadow: 0 4px 12px rgba(231, 76, 60, 0.3);
+        }
+        button:hover { opacity: 0.9; }
+
+        /* 贺卡展示区（生成后显示） */
+        .card-view {
+            display: none;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 8px 30px rgba(192, 57, 43, 0.25);
+            position: relative;
+            height: auto;
+            aspect-ratio: 9 / 16;
+            max-height: 80vh;
+        }
+        .card-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://img.alicdn.com/imgextra/i4/O1CN01ZvJhUH1XqQmYdFzKj_!!6000000002885-2-tps-1080-1920.png');
+            background-size: cover;
+            background-color: #c0392b; /* fallback */
+        }
+        .card-content {
+            position: relative;
+            z-index: 2;
+            padding: 30px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.4);
+        }
+        .card-title {
+            font-size: 36px;
+            margin-bottom: 30px;
+            letter-spacing: 6px;
+        }
+        .card-message {
+            font-size: 22px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+            background: rgba(0,0,0,0.2);
+            padding: 15px;
+            border-radius: 12px;
+            width: 90%;
+        }
+        .card-sender {
+            font-size: 20px;
+            margin-top: auto;
+        }
+        .share-tip {
+            margin-top: 20px;
+            text-align: center;
+            color: #e74c3c;
+            font-weight: bold;
+            background: #fff8f0;
+            padding: 12px;
+            border-radius: 12px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- 表单阶段 -->
+        <div id="formSection" class="form-area">
+            <h2>✨ 生成你的专属祝福</h2>
+            <textarea id="message" placeholder="写下你的新年祝福吧...（例如：祝大家龙年大吉，万事如意！）" rows="3"></textarea>
+            <input type="text" id="name" placeholder="你的名字或部门（例如：技术部 小王）" />
+            <button onclick="createCard()">🎁 生成我的贺卡</button>
+        </div>
+
+        <!-- 贺卡展示阶段 -->
+        <div id="cardSection" class="card-view">
+            <div class="card-bg"></div>
+            <div class="card-content">
+                <div class="card-title">把爱带回家</div>
+                <div class="card-message" id="displayMessage">愿新年胜旧年，幸福常相伴。</div>
+                <div class="card-sender" id="displayName">—— 来自：企业员工</div>
+            </div>
+        </div>
+
+        <div id="shareTip" class="share-tip" style="display:none;">
+            👉 点击右上角「…」→「分享到朋友圈」<br/>
+            或发送给微信好友，传递你的祝福！
+        </div>
+    </div>
+
+    <script>
+        function createCard() {
+            const msg = document.getElementById('message').value.trim() || "愿新年胜旧年，幸福常相伴。";
+            const name = document.getElementById('name').value.trim() || "企业员工";
+
+            // 更新贺卡内容
+            document.getElementById('displayMessage').innerText = msg;
+            document.getElementById('displayName').innerText = `—— 来自： $ {name}`;
+
+            // 切换视图
+            document.getElementById('formSection').style.display = 'none';
+            document.getElementById('cardSection').style.display = 'block';
+            document.getElementById('shareTip').style.display = 'block';
+
+            // 更新 URL（可选：用于分享）
+            const newUrl = ` $ {window.location.origin} $ {window.location.pathname}?msg= $ {encodeURIComponent(msg)}&name= $ {encodeURIComponent(name)}`;
+            window.history.replaceState({}, '', newUrl);
+        }
+
+        // 页面加载时检查是否带参数（用于分享后打开）
+        window.onload = () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const msg = urlParams.get('msg');
+            const name = urlParams.get('name');
+            if (msg && name) {
+                document.getElementById('displayMessage').innerText = decodeURIComponent(msg);
+                document.getElementById('displayName').innerText = `—— 来自： $ {decodeURIComponent(name)}`;
+                document.getElementById('formSection').style.display = 'none';
+                document.getElementById('cardSection').style.display = 'block';
+                document.getElementById('shareTip').style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
