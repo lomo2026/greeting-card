@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  
+  <!-- 微信 / 抖音分享关键 Meta - 注意：部署后替换 og:url 和 og:image -->
+  <title>把爱带回家 | 专属祝福</title>
+  <meta name="description" content="这是我送你的祝福，愿温暖常伴，幸福安康！点击打开专属贺卡 >>" />
+  <meta property="og:title" content="把爱带回家 | 专属祝福" />
+  <meta property="og:description" content="这是我送你的祝福，愿温暖常伴，幸福安康！点击打开专属贺卡 >>" />
+  <meta property="og:image" content="
+https://tupian2026.oss-cn-shenzhen.aliyuncs.com/%E6%84%9F%E6%81%A9%E6%9C%89%E4%BD%A0.png" />
+  <meta property="og:url" content="https://yourdomain.com/gratitude-card.html" />
+  <meta property="og:type" content="website" />
+
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: linear-gradient(135deg, #ff7e5f, #feb47b);
+      font-family: "华文行楷", "STXingkai", "KaiTi", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", "SimHei", cursive, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+      overflow-x: hidden;
+      position: relative;
+      color: white;
+    }
+
+    /* 飘落动画容器 */
+    #snow-container {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: 1;
+      overflow: hidden;
+    }
+    .snow {
+      position: absolute;
+      color: #ffd700;
+      font-size: 24px;
+      opacity: 0.8;
+      text-shadow: 0 0 8px rgba(255,215,0,0.6);
+      animation: fall linear forwards;
+    }
+
+    @keyframes fall {
+      to { transform: translateY(100%) rotate(360deg); }
+    }
+
+    .container {
+      max-width: 600px;
+      width: 100%;
+      z-index: 2;
+    }
+
+    .form-area {
+      background: rgba(255, 255, 255, 0.92);
+      padding: clamp(15px, 5vw, 25px);
+      border-radius: 20px;
+      box-shadow: 0 8px 25px rgba(192, 57, 43, 0.4);
+      margin-bottom: 25px;
+      backdrop-filter: blur(5px);
+    }
+    .form-area h2 {
+      text-align: center;
+      color: #c0392b;
+      margin-bottom: 20px;
+      font-size: clamp(24px, 6vw, 28px);
+      text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+    }
+    textarea, input {
+      width: 100%;
+      padding: clamp(10px, 3vw, 14px);
+      margin: 12px 0;
+      border: 2px solid #e74c3c;
+      border-radius: 12px;
+      font-size: clamp(16px, 4vw, 18px);
+      font-family: inherit;
+      outline: none;
+      resize: none;
+    }
+    button {
+      width: 100%;
+      padding: clamp(12px, 4vw, 16px);
+      background: linear-gradient(135deg, #e74c3c, #c0392b);
+      color: white;
+      border: none;
+      border-radius: 14px;
+      font-size: clamp(18px, 5vw, 20px);
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 10px;
+      box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
+      transition: all 0.3s ease;
+    }
+    button:hover { transform: scale(1.02); }
+    button:active { transform: scale(0.98); }
+
+    .card-view {
+      display: none;
+      width: 100%;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 10px 30px rgba(192, 57, 43, 0.35);
+      position: relative;
+      aspect-ratio: 9 / 16;
+      max-height: 85vh;
+      animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .card-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('https://i.imgur.com/KMCyiBY.png');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      opacity: 0.95;
+    }
+    .card-content {
+      position: relative;
+      z-index: 2;
+      padding: clamp(20px, 8vw, 30px);
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      color: #fff;
+      text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+    }
+    .card-title {
+      font-size: clamp(32px, 12vw, 48px);
+      margin-bottom: 30px;
+      letter-spacing: 8px;
+      animation: pulse 2s infinite, shine 3s ease-in-out infinite alternate;
+      white-space: nowrap;
+      overflow: hidden;
+      font-weight: bold;
+      background: linear-gradient(135deg, #ffd700, #ff9a76, #ff6b6b);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      -webkit-text-stroke: 1px rgba(255,255,255,0.8);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+    @keyframes shine {
+      from { filter: drop-shadow(0 0 10px rgba(255,215,0,0.4)); }
+      to { filter: drop-shadow(0 0 20px rgba(255,154,118,0.8)); }
+    }
+    .card-message {
+      font-size: clamp(18px, 5vw, 24px);
+      line-height: 2;
+      margin-bottom: 25px;
+      background: rgba(0,0,0,0.25);
+      padding: clamp(15px, 5vw, 20px);
+      border-radius: 16px;
+      width: 100%;
+      backdrop-filter: blur(8px);
+      max-height: 40%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overflow: hidden;
+      min-height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .char-animate {
+      opacity: 0;
+      transform: translateY(10px);
+      animation: charFadeIn 0.5s ease forwards;
+      display: inline-block;
+    }
+    @keyframes charFadeIn {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .card-sender {
+      font-size: clamp(18px, 4.5vw, 22px);
+      margin-top: auto;
+      animation: fadeIn 1.5s ease-out;
+      padding: 10px 20px;
+      background: rgba(255,107,107,0.2);
+      border-radius: 12px;
+      backdrop-filter: blur(5px);
+    }
+
+    #loading {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      font-size: clamp(18px, 4vw, 20px);
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      transition: all 0.3s ease;
+      flex-direction: column;
+    }
+    #loading::after {
+      content: '';
+      width: 20px;
+      height: 20px;
+      border: 3px solid #fff;
+      border-top: 3px solid transparent;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-top: 15px;
+    }
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div id="snow-container"></div>
+
+  <div class="container">
+    <div id="formSection" class="form-area">
+      <h2>✨ 写下你的祝福</h2>
+      <textarea id="message" placeholder="写下你想说的话...（最多50字，例如：愿你平安喜乐，万事顺遂！）" rows="3"></textarea>
+      <input type="text" id="name" placeholder="你的名字（最多8字）" />
+      <button id="createCardBtn">🎁 生成我的祝福卡</button>
+    </div>
+
+    <div id="cardSection" class="card-view">
+      <div class="card-bg"></div>
+      <div class="card-content">
+        <div class="card-title">把爱带回家</div>
+        <div class="card-message" id="displayMessage">愿你被世界温柔以待，幸福常伴。</div>
+        <div class="card-sender" id="displayName">—— 来自：朋友</div>
+        
+        <!-- 保存按钮保留 -->
+        <div style="margin-top: 20px;">
+          <button id="saveBtn" style="
+            background: linear-gradient(135deg, #ffd700, #ff9a76);
+            color: #c0392b;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(255,215,0,0.4);
+            transition: transform 0.2s;
+          ">💾 保存贺卡到相册</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="loading">生成中，请稍候</div>
+
+  <script>
+    const CONSTANTS = {
+      SNOW_INTERVAL: 600,
+      SNOW_DURATION: 10000,
+      LOADING_DELAY: 800,
+      MAX_MSG_LENGTH: 50,
+      MAX_NAME_LENGTH: 8,
+      SNOW_SYMBOLS: ['❤️', '✨', '🕊️', '🌸', '💫', '💌', '🌟'],
+      DEFAULT_MSG: '愿你被世界温柔以待，幸福常伴。',
+      DEFAULT_NAME: '朋友',
+      CHAR_DELAY: 80,
+      BG_IMAGE_URL: 'https://i.imgur.com/KMCyiBY.png'
+    };
+
+    let snowTimer = null;
+
+    function createSnow() {
+      const container = document.getElementById('snow-container');
+      const maxSnowCount = 20;
+      snowTimer = setInterval(() => {
+        if (container.children.length >= maxSnowCount) return;
+        const snow = document.createElement('div');
+        snow.classList.add('snow');
+        snow.innerText = CONSTANTS.SNOW_SYMBOLS[Math.floor(Math.random() * CONSTANTS.SNOW_SYMBOLS.length)];
+        snow.style.left = `${Math.random() * 100}vw`;
+        snow.style.opacity = `${Math.random() * 0.5 + 0.5}`;
+        snow.style.fontSize = `${Math.random() * 20 + 16}px`;
+        snow.style.animationDuration = `${Math.random() * 5 + 5}s`;
+        snow.style.transform = `rotate(${Math.random() * 360}deg)`;
+        container.appendChild(snow);
+        setTimeout(() => snow.remove(), CONSTANTS.SNOW_DURATION);
+      }, CONSTANTS.SNOW_INTERVAL);
+    }
+
+    function initTextAnimate(text, container) {
+      container.innerHTML = '';
+      const chars = text.split('');
+      chars.forEach((char, index) => {
+        const span = document.createElement('span');
+        span.className = 'char-animate';
+        span.innerText = char;
+        span.style.animationDelay = `${index * CONSTANTS.CHAR_DELAY}ms`;
+        container.appendChild(span);
+      });
+    }
+
+    async function generateCardImage(message, senderName) {
+      return new Promise((resolve, reject) => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        const width = 1080;
+        const height = 1920;
+        canvas.width = width;
+        canvas.height = height;
+
+        const bgImg = new Image();
+        bgImg.crossOrigin = "anonymous";
+        bgImg.src = CONSTANTS.BG_IMAGE_URL;
+        
+        bgImg.onload = () => {
+          ctx.drawImage(bgImg, 0, 0, width, height);
+          
+          // 标题
+          ctx.font = 'bold 120px "华文行楷", "STXingkai", cursive, sans-serif';
+          ctx.textAlign = 'center';
+          ctx.fillStyle = '#ffd700';
+          ctx.strokeStyle = 'rgba(255,255,255,0.8)';
+          ctx.lineWidth = 3;
+          ctx.strokeText('把爱带回家', width / 2, 400);
+          ctx.fillText('把爱带回家', width / 2, 400);
+          
+          // 祝福语（自动换行）
+          ctx.font = '48px "KaiTi", cursive, sans-serif';
+          ctx.fillStyle = 'white';
+          wrapText(ctx, message, width / 2, 600, 900, 60);
+          
+          // 发送者
+          ctx.font = '42px "PingFang SC", sans-serif';
+          ctx.fillStyle = 'rgba(255,255,255,0.9)';
+          ctx.fillText(`—— 来自：${senderName}`, width / 2, height - 200);
+          
+          resolve(canvas.toDataURL('image/png'));
+        };
+        
+        bgImg.onerror = () => reject(new Error('背景图加载失败'));
+      });
+    }
+
+    function wrapText(ctx, text, x, y, maxWidth, lineHeight) {
+      const words = text.split('');
+      let line = '';
+      let currentY = y;
+      for (let n = 0; n < words.length; n++) {
+        let testLine = line + words[n];
+        let metrics = ctx.measureText(testLine);
+        if (metrics.width > maxWidth && n > 0) {
+          ctx.fillText(line, x, currentY);
+          line = words[n];
+          currentY += lineHeight;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, x, currentY);
+    }
+
+    async function handleSaveClick() {
+      const msgEl = document.getElementById('displayMessage');
+      const nameEl = document.getElementById('displayName');
+      const msg = msgEl.textContent.trim();
+      const name = nameEl.textContent.replace('—— 来自：', '').trim();
+      
+      try {
+        const loading = document.getElementById('loading');
+        loading.innerText = '正在生成图片...';
+        loading.style.display = 'flex';
+
+        const imgUrl = await generateCardImage(msg, name);
+        
+        const preview = document.createElement('div');
+        preview.style.cssText = `
+          position: fixed;
+          top: 0; left: 0;
+          width: 100%; height: 100%;
+          background: rgba(0,0,0,0.9);
+          display: flex;
+          flex-direction: column;
+          align-items: center;
+          justify-content: center;
+          z-index: 2000;
+          padding: 20px;
+        `;
+        
+        const img = document.createElement('img');
+        img.src = imgUrl;
+        img.style.cssText = `
+          max-width: 90%;
+          max-height: 80%;
+          border-radius: 12px;
+          box-shadow: 0 0 30px rgba(255,215,0,0.6);
+        `;
+        
+        // 删掉了预览图下方的长按保存提示tip
+        const closeBtn = document.createElement('div');
+        closeBtn.innerText = '× 关闭';
+        closeBtn.style.cssText = `
+          color: #ffd700;
+          margin-top: 20px;
+          font-size: 20px;
+          cursor: pointer;
+        `;
+        closeBtn.onclick = () => document.body.removeChild(preview);
+        
+        preview.appendChild(img);
+        preview.appendChild(closeBtn);
+        document.body.appendChild(preview);
+        
+        loading.style.display = 'none';
+      } catch (e) {
+        console.error('生成失败', e);
+        alert('图片生成失败，请刷新页面重试');
+        document.getElementById('loading').style.display = 'none';
+      }
+    }
+
+    function createCard() {
+      const msgInput = document.getElementById('message');
+      const nameInput = document.getElementById('name');
+      const msg = msgInput.value.trim();
+      const name = nameInput.value.trim();
+      const messageContainer = document.getElementById('displayMessage');
+      
+      if (!msg) { alert('请写下你的祝福话语～'); msgInput.focus(); return; }
+      if (!name) { alert('请填写你的名字～'); nameInput.focus(); return; }
+      if (msg.length > CONSTANTS.MAX_MSG_LENGTH) { alert(`祝福语最多${CONSTANTS.MAX_MSG_LENGTH}字哦～`); msgInput.focus(); return; }
+      if (name.length > CONSTANTS.MAX_NAME_LENGTH) { alert(`名字最多${CONSTANTS.MAX_NAME_LENGTH}字哦～`); nameInput.focus(); return; }
+
+      const loading = document.getElementById('loading');
+      loading.style.display = 'flex';
+      loading.innerText = '生成中，请稍候';
+
+      setTimeout(() => {
+        document.getElementById('displayName').innerText = `—— 来自：${name}`;
+        initTextAnimate(msg, messageContainer);
+        document.getElementById('formSection').style.display = 'none';
+        document.getElementById('cardSection').style.display = 'block';
+        // 删掉了分享提示条的显示代码
+
+        const newUrl = `${window.location.origin}${window.location.pathname}?msg=${encodeURIComponent(msg)}&name=${encodeURIComponent(name)}`;
+        window.history.replaceState({}, '', newUrl);
+        loading.style.display = 'none';
+      }, CONSTANTS.LOADING_DELAY);
+    }
+
+    window.onload = () => {
+      createSnow();
+      document.getElementById('createCardBtn').addEventListener('click', createCard);
+      document.getElementById('name').addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') createCard();
+      });
+
+      // 动态监听保存按钮点击（因按钮初始隐藏）
+      document.addEventListener('click', (e) => {
+        if (e.target.id === 'saveBtn') {
+          handleSaveClick();
+        }
+      });
+
+      const urlParams = new URLSearchParams(window.location.search);
+      const msg = urlParams.get('msg');
+      const name = urlParams.get('name');
+      const messageContainer = document.getElementById('displayMessage');
+      if (msg && name) {
+        try {
+          const decodeMsg = decodeURIComponent(msg);
+          const decodeName = decodeURIComponent(name);
+          initTextAnimate(decodeMsg, messageContainer);
+          document.getElementById('displayName').innerText = `—— 来自：${decodeName}`;
+          document.getElementById('formSection').style.display = 'none';
+          document.getElementById('cardSection').style.display = 'block';
+          // 删掉了分享提示条的显示代码
+        } catch (e) {
+          initTextAnimate(CONSTANTS.DEFAULT_MSG, messageContainer);
+        }
+      } else {
+        initTextAnimate(CONSTANTS.DEFAULT_MSG, messageContainer);
+      }
+    };
+
+    window.onunload = () => {
+      if (snowTimer) clearInterval(snowTimer);
+    };
+  </script>
+</body>
+</html>
